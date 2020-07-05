@@ -2,7 +2,7 @@ from flask import Flask
 from config import Config
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
-from flask_mail import Mail, Message
+from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)

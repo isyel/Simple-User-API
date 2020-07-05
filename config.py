@@ -1,10 +1,12 @@
 import os
 
+# Configure SQL, JWT and Mailtrap
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or "secret_string"
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('MYSQL_SQLALCHEMY_DATABASE_URI')
+    # or use
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('SQLITE_SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = 'super-secret'
+    JWT_SECRET_KEY = os.environ.get('SECRET_KEY') or "secret_string"
     MAIL_SERVER = 'smtp.mailtrap.io'
     MAIL_PORT = 2525
     MAIL_USERNAME = '23edf956eed858'
