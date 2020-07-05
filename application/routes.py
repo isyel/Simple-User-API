@@ -82,6 +82,7 @@ def reset_password():
     user = User.query.filter_by(email=email, reset_code=reset_code).first()
     if user:
         user.set_password(new_password)
+        user.reset_code = "NULL"
         db.session.commit()
         return jsonify(message="Password reset successfully, you can login with new password")
     else:
