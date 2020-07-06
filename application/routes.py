@@ -112,15 +112,21 @@ def user_details(id: int):
 @app.route('/user-profile', methods=['POST']) 
 @jwt_required  
 def user_profile():
-    token = request.json['access_token']
-    decoded_token = decode_token(token)
-    email = decoded_token["identity"]
-    user = User.query.filter_by(email=email).first()
-    if user:
-        result = user_schema.dump(user)
-        return jsonify(result)
+    # get the access token from the authorization header
+    auth_header = request.headers.get('Authorization')
+    access_token = auth_header.split(" ")[1]
+
+    if access_token:
+        decoded_token = decode_token(access_token)
+        email = decoded_token["identity"]
+        user = User.query.filter_by(email=email).first()
+        if user:
+            result = user_schema.dump(user)
+            return jsonify(result)
+        else:
+            return jsonify(message="Sorry, could not find your profile"), 404
     else:
-        return jsonify(message="Sorry, could not find your profile"), 404
+        return jsonify(message="Could not find Access Token"), 401
     
 
 # Update user details
@@ -143,13 +149,15 @@ def update_user():
 @app.route('/update_profile', methods=['PUT']) 
 @jwt_required 
 def update_profile():
-    id = int(request.json['id'])
-    user_id = User.query.filter_by(id=id).first()
-    if user_id:
-        token = request.json['access_token']
-        decoded_token = decode_token(token)
-        email = decoded_token["identity"]
-        user = User.query.filter_by(email=email, id=id).first()
+    # get the access token from the authorization header
+    auth_header = request.headers.get('Authorization')
+    access_token = auth_header.split(" ")[1]
+
+    if access_token:
+        # Get the user id related to this access token
+        decoded_token = decode_token(access_token)
+        email = decoded_token["identity"]        
+        user = User.query.filter_by(email=email).first()
         if user:
             user.first_name = request.json['first_name']
             user.last_name = request.json['last_name']
@@ -159,4 +167,4 @@ def update_profile():
         else:
             return jsonify(message="Sorry you cannot update this profile"), 404
     else:
-        return jsonify(message="This user does not exist"), 404
+        return jsonify(message="Access Token is missing"), 401
